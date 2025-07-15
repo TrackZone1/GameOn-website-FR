@@ -542,20 +542,28 @@ footer {
     display: block;
 }
 
-/* Styles pour le message de confirmation */
-.confirmation-message {
-    color: #28a745;
-    font-size: 16px;
-    margin-top: 15px;
-    text-align: center;
-    font-weight: bold;
-    display: none;
-    padding: 10px;
-    background-color: rgba(40, 167, 69, 0.1);
-    border-radius: 5px;
-    border: 1px solid #28a745;
+/* Style pour les inputs avec erreur */
+.text-control.error {
+    border: 2px solid #fe142f !important;
 }
 
-.confirmation-message:not(:empty) {
-    display: block;
+/* Styles pour le message de confirmation */
+.confirmation-message {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+    color: #fff;
+}
+
+.confirmation-message h2 {
+    font-size: 2rem;
+    font-weight: normal;
+    margin-bottom: 40px;
+    line-height: 1.2;
+}
+
+.confirmation-message .btn-submit {
+    margin-top: 20px;
+    padding: 15px 40px;
+    font-size: 1rem;
 }

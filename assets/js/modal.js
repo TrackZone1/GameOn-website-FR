@@ -20,45 +20,72 @@ function launchModal() {
     modalbg.style.display = "block";
 }
 
-// fermer la modal
+// close modal
 function closeModal() {
     modalbg.style.display = "none";
+    // Reset modal state
+    hideConfirmation();
 }
 
-// Fonction pour effacer tous les messages d'erreur
+// Function to clear all error messages
 function clearErrors() {
     const errorElements = document.querySelectorAll(".error-message");
     errorElements.forEach((element) => {
         element.textContent = "";
         element.style.display = "none";
     });
+
+    // Remove error class from all inputs
+    const inputs = document.querySelectorAll(".text-control");
+    inputs.forEach((input) => {
+        input.classList.remove("error");
+    });
 }
 
-// Fonction pour afficher un message d'erreur
+// Function to display an error message
 function showError(fieldId, message) {
     const errorElement = document.getElementById(fieldId + "-error");
+    const inputElement = document.getElementById(fieldId);
+
     if (errorElement) {
         errorElement.textContent = message;
         errorElement.style.display = "block";
     }
+
+    // Add error class to the input
+    if (inputElement && inputElement.classList.contains("text-control")) {
+        inputElement.classList.add("error");
+    }
 }
 
-// Fonction pour afficher le message de confirmation
+// Function to display the confirmation message
 function showConfirmation() {
     const confirmationElement = document.getElementById("confirmation-message");
-    if (confirmationElement) {
-        confirmationElement.textContent =
-            "Merci ! Votre réservation a été reçue.";
+    const form = document.querySelector('form[name="reserve"]');
+
+    if (confirmationElement && form) {
+        // Hide the form
+        form.style.display = "none";
+
+        // Display the confirmation message
+        confirmationElement.innerHTML = `
+            <h2>Merci pour<br/>votre inscription</h2>
+            <button class="btn-submit" onclick="closeModal()">Fermer</button>
+        `;
         confirmationElement.style.display = "block";
     }
 }
 
-// Fonction pour masquer le message de confirmation
+// Function to hide the confirmation message
 function hideConfirmation() {
     const confirmationElement = document.getElementById("confirmation-message");
-    if (confirmationElement) {
-        confirmationElement.textContent = "";
+    const form = document.querySelector('form[name="reserve"]');
+
+    if (confirmationElement && form) {
+        confirmationElement.innerHTML = "";
         confirmationElement.style.display = "none";
+        // Show the form again
+        form.style.display = "block";
     }
 }
 
@@ -67,16 +94,16 @@ function validate() {
     const formData = new FormData(form);
     const formDataObject = Object.fromEntries(formData);
 
-    // Effacer tous les messages d'erreur précédents
+    // Clear all previous error messages
     clearErrors();
 
-    // Masquer le message de confirmation précédent
+    // Hide previous confirmation message
     hideConfirmation();
 
-    // Validation des champs
+    // Field validation
     let isValid = true;
 
-    // (1) Prénom - minimum 2 caractères
+    // (1) First name - minimum 2 characters
     if (!formDataObject.first || formDataObject.first.trim().length < 2) {
         isValid = false;
         showError(
@@ -85,7 +112,7 @@ function validate() {
         );
     }
 
-    // (2) Nom de famille - minimum 2 caractères
+    // (2) Last name - minimum 2 characters
     if (!formDataObject.last || formDataObject.last.trim().length < 2) {
         isValid = false;
         showError(
@@ -94,20 +121,20 @@ function validate() {
         );
     }
 
-    // (3) Email valide
+    // (3) Valid email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formDataObject.email || !emailRegex.test(formDataObject.email)) {
         isValid = false;
         showError("email", "Veuillez saisir une adresse email valide.");
     }
 
-    // (4) Date de naissance
+    // (4) Birthdate
     if (!formDataObject.birthdate) {
         isValid = false;
         showError("birthdate", "Vous devez entrer votre date de naissance.");
     }
 
-    // (5) Nombre de concours - valeur numérique
+    // (5) Number of tournaments - numeric value
     if (
         !formDataObject.quantity ||
         isNaN(formDataObject.quantity) ||
@@ -117,13 +144,13 @@ function validate() {
         showError("quantity", "Veuillez saisir un nombre valide de concours.");
     }
 
-    // (6) Bouton radio sélectionné
+    // (6) Radio button selected
     if (!formDataObject.location) {
         isValid = false;
         showError("location", "Vous devez choisir une option.");
     }
 
-    // (7) Case des conditions générales cochée
+    // (7) Terms and conditions checkbox checked
     const checkbox1 = document.getElementById("checkbox1");
     if (!checkbox1.checked) {
         isValid = false;
@@ -136,7 +163,6 @@ function validate() {
     if (isValid) {
         console.log(formDataObject);
         form.reset();
-        closeModal();
         showConfirmation();
         return false;
     } else {
