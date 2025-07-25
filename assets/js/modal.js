@@ -132,6 +132,24 @@ function validate() {
     if (!formDataObject.birthdate) {
         isValid = false;
         showError("birthdate", "Vous devez entrer votre date de naissance.");
+    } else {
+        const birthDate = new Date(formDataObject.birthdate);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age < 18) {
+            isValid = false;
+            showError(
+                "birthdate",
+                "Vous devez avoir au moins 18 ans pour vous inscrire."
+            );
+        } else if (age > 99) {
+            isValid = false;
+            showError("birthdate", "L'âge maximum autorisé est de 99 ans.");
+        }
     }
 
     // (5) Number of tournaments - numeric value
